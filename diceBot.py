@@ -12,6 +12,7 @@ import asyncio
 from discord.ext import commands
 
 # A dice bot for use with Discord
+bot = discord.Client()
 bot = commands.Bot(command_prefix='!', description="A bot to handle all your RPG rolling needs")
 
 # Determines if the value can be converted to an integer
@@ -176,5 +177,6 @@ def roll(ctx, roll : str):
         # Display error message to channel
         yield from bot.say(err)
 
-# Create a bot account and manually join it to the server you're wanting. Input email and password below
-bot.run('username', 'password')
+# Follow this helpful guide on creating a bot and adding it to your server. 
+# https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
+bot.run('token')
