@@ -16,6 +16,9 @@ Replace `async def` instead of `@asyncio.corouting` and `await` instead of `yiel
 4. Launch script.
 
 # Commands
+`!purge`
+Deletes all messages made from the bot. Used to clean up after a session.
+
 `!roll`
 Supported rolls are:
 - !roll 100 - Rolls from 1-100
