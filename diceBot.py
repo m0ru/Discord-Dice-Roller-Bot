@@ -15,6 +15,10 @@ from discord.ext import commands
 bot = discord.Client()
 bot = commands.Bot(command_prefix='!', description="A bot to handle all your RPG rolling needs")
 
+# Determines if a message is owned by the bot
+def is_me(m):
+    return m.author == bot.user
+
 # Determines if the value can be converted to an integer
 # Parameters: s - input string
 # Returns: boolean. True if can be converted, False if it throws an error.
@@ -176,6 +180,14 @@ def roll(ctx, roll : str):
     except ValueError as err:
         # Display error message to channel
         yield from bot.say(err)
+
+#Bot command to delete all messages the bot has made.        
+@bot.command(pass_context=True,description='Deletes all messages the bot has made')
+@asyncio.coroutine
+def purge(ctx):
+    channel = ctx.message.channel
+    deleted = yield from bot.purge_from(channel, limit=100, check=is_me)
+    yield from bot.send_message(channel, 'Deleted {} message(s)'.format(len(deleted)))
 
 # Follow this helpful guide on creating a bot and adding it to your server. 
 # https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
