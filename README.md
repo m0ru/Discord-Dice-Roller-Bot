@@ -10,9 +10,9 @@ This requires Python 3.4.1+. If you are using Python 3.5:
 Replace `async def` instead of `@asyncio.corouting` and `await` instead of `yield from`
 
 # Usage
-1. Create a new Discord account for your bot.
+1. Follow the directions [here] (https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) to create a bot token.
 2. Add the bot to the servers you want.
-3. Place the email and password for the bot in the last line of this script.
+3. Place the token in the last line of the script.
 4. Launch script.
 
 # Commands
