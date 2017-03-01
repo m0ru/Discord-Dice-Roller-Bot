@@ -2,7 +2,7 @@
 # LICENSE: This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
 # @category   Tools
 # @copyright  Copyright (c) 2016 Robert Thayer (http://www.gamergadgets.net)
-# @version    1.0
+# @version    1.1
 # @link       http://www.gamergadgets.net
 # @author     Robert Thayer
 
