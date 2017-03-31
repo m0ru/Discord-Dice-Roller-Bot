@@ -1,5 +1,5 @@
 # Discord-Dice-Roller-Bot
-A bot that handles most RPG dice rolls
+A bot that handles rolls for Shadowrun Anarchy
 
 # Dependencies
 This bot is extended from [Discord.py] (https://github.com/Rapptz/discord.py/). Install Discord.py prior to running this bot.
@@ -21,15 +21,13 @@ Deletes all messages made from the bot. Used to clean up after a session.
 
 `!roll`
 Supported rolls are:
-- !roll 100 - Rolls from 1-100
-- !roll 50-100 - Rolls from 50-100
-- !roll 3d6 - Rolls 3 6-sided die
+- !roll # - Rolls # of d6 (max 200), returns number of hits.
 
 #Modifiers
-- `!` Success marker. Used with 3d6 type rolls. !roll 10d6!5 will give you the number of times the dice rolls 5 or higher.
-- `>` Success marker. Used with 100, 50-100, 3d6 type rolls. !roll 100>50 will say "Success" if result is over 50 or "Failure" if not.
-- `mod` Modifier. Used with any roll. Adds or subtracts from the roll. !roll 100mod4 will add 4 to the roll.
+- `>` Success marker. !roll 12>3 will say "Success" if number of hits is 3 or higher or "Failure" if not. Will also show net hits.
+- `r` Reroll. Rerolls number of misses. !roll 12r3 will reroll up to 3 missed dice.
+- 'e' Pre-Edge. Adds one die to the total and counts 4s as hits. !roll 12e
+- 'g' Live Dangerously. Adds an exploit/glitch die to the roll. !roll 12g
 
 You can string these together:
-- `!roll 100>40mod-3` would choose a number between 1-100, subtract 3, then let you know if it was over 40.
-- `!roll 10d6!4mod2>3` would roll 10 d6, count number of dice rolled that are 4+, add 2 to that number, and let you know if that number was over 3.
+- `!roll 10>4r3eg` would roll 11d6, give a count of how many are 4 or higher, reroll up to 3 misses, advise if the roll got more than 4 hits, and roll a glitch/exploit die.
