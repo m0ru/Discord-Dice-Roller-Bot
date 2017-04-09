@@ -1,7 +1,9 @@
 # A dice rolling bot for use on Discord servers designed for Shadowrun Anarchy
 # LICENSE: This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
 # @category   Tools
-# @copyright  Copyright (c) 2016 Robert Thayer (http://www.gamergadgets.net)
+# @copyright  Copyright (c) 2016 Robert Thayer 
+
+#(http://www.gamergadgets.net)
 # @version    1.1
 # @link       http://www.gamergadgets.net
 # @author     Robert Thayer
@@ -38,12 +40,11 @@ def roll_advanced(num_of_dice, glitch, edge, reroll, threshold):
     results = ""
     total, misses = 0, 0
     if (edge):
-        num_of_dice += 1
         hit = 4
     else:
         hit = 5
     for x in range(0, int(num_of_dice)):
-        y = roll_basic
+        y = roll_basic()
         if (y >= int(hit)):
             results += "**{}** ".format(y)
             total += 1
@@ -55,7 +56,7 @@ def roll_advanced(num_of_dice, glitch, edge, reroll, threshold):
     if (reroll > 0):
         results += "Reroll: "
         for x in range(0, int(reroll)):
-            y = roll_basic
+            y = roll_basic()
             if (y >= int(hit)):
                 results += "**{}** ".format(y)
                 total += 1
@@ -65,19 +66,19 @@ def roll_advanced(num_of_dice, glitch, edge, reroll, threshold):
     if (threshold > 0):
         if (total >= threshold):
             net_hits = total - threshold
-            results += "Success. Net hits: {} ".format(net_hits)
+            results += "`Success. Net hits: {}` ".format(net_hits)
         else:
-            results += "Failure. "
+            results += "Failure.` "
     if (glitch):
-        results += "Live Dangerously: "
-        y = roll_basic
+        results += "*Live Dangerously:* "
+        y = roll_basic()
         if (y == 1):
             results += "**GLITCH**"
         elif (y >= 5):
             results += "**EXPLOIT**"
         else:
             results += "No Effect"
-
+    return results
 
 
 @bot.event
@@ -92,39 +93,59 @@ def on_ready():
 @bot.command(pass_context=True,description='Rolls dice.\nExamples:\n12  Rolls 12d6.\nModifiers:\n> Threshold. 12>3 returns success if number of hits is greater than or equal to 33.\ne Edge. Use for pre-edge. Will add one die and count 4s as hits.\ng Glitch Die: Roll one die. If a 1, a glitch occurs. If a 5 or 6, an exploit happens.\nr Reroll. 12r2 will reroll up to 2 misses.')
 @asyncio.coroutine
 def roll(ctx, roll : str):
-    plural, index, num_of_dice, threshold, reroll, glitch, edge = "", 0, 0, 0, 0, false, false
+    plural, index, num_of_dice, threshold, reroll, glitch, edge = "", -1, 0, 0, 0, False, False
     # author: Writer of discord message
     author = ctx.message.author
     roll = roll.lower()
-    while (roll[index].isdigit()):
-        index += 1
-    
-    if (index > 0):
-        num_of_dice = roll[:index]
-    
-    roll = roll[index:]
     if (roll.find('e') != -1):
-        edge = true
+        edge = True
         roll = roll.replace("e", "")
     if (roll.find('g') != -1):
-        glitch = true
+        glitch = True
         roll = roll.replace("g", "")
+        
+    for i, x in enumerate(roll):
+        if (x.isdigit()):
+            index = i
+        else:
+            break
+    
+    if (index >= 0):
+        num_of_dice = roll[:index+1]
+    
+    roll = roll[index+1:]
+    
     if (roll.find('r') != -1):
         index = roll.find('r') + 1
-        while (roll[index].isdigit()):
-            index += 1
-        if (index > roll.find('r')):
-            reroll = roll[roll.find('r'):index]
+        reroll_sub = roll[index:]
+        index = -1
+        for i, x in enumerate(reroll_sub):
+            if (x.isdigit()):
+                index = i
+            else:
+                break
+        
+        if (index >= 0):
+            reroll = reroll_sub[:index+1]
+            reroll = int(reroll)
+            
     if (roll.find('>') != -1):
         index = roll.find('>') + 1
-        while (roll[index].isdigit()):
-            index += 1
-        if (index > roll.find('>')):
-            threshold = roll[roll.find('>'):index]
+        thresh_sub = roll[index:]
+        index = -1
+        for i, x in enumerate(thresh_sub):
+            if (x.isdigit()):
+                index = i
+            else:
+                break
+        
+        if (index >= 0):
+            threshold = thresh_sub[:index+1]
+            threshold = int(threshold)
         
     #Validate data
     try:
-        if (num_of_dice >= 1):
+        if (num_of_dice != 0):
             if (is_num(num_of_dice) is False):
                 raise ValueError("Number of dice format error.")
                 return
@@ -143,6 +164,8 @@ def roll(ctx, roll : str):
             plural = "die"
         else:
             plural = "dice"
+        if (edge):
+            num_of_dice += 1
         yield from bot.say("{} rolls {} {}. Results: {}".format(author, num_of_dice, plural, roll_advanced(num_of_dice, glitch, edge, reroll, threshold)))
        
     except ValueError as err:
@@ -154,7 +177,9 @@ def roll(ctx, roll : str):
 @asyncio.coroutine
 def purge(ctx):
     channel = ctx.message.channel
-    deleted = yield from bot.purge_from(channel, limit=100, check=is_me)
+    deleted = yield from bot.purge_from(channel, limit=100, 
+
+check=is_me)
     yield from bot.send_message(channel, 'Deleted {} message(s)'.format(len(deleted)))
 
 # Follow this helpful guide on creating a bot and adding it to your server. 
