@@ -90,7 +90,7 @@ def on_ready():
     print('------')
 
 # Parse !roll verbiage
-@bot.command(pass_context=True,description='Rolls dice.\nExamples:\n12  Rolls 12d6.\nModifiers:\n> Threshold. 12>3 returns success if number of hits is greater than or equal to 33.\ne Edge. Use for pre-edge. Will add one die and count 4s as hits.\ng Glitch Die: Roll one die. If a 1, a glitch occurs. If a 5 or 6, an exploit happens.\nr Reroll. 12r2 will reroll up to 2 misses.')
+@bot.command(pass_context=True,description='Rolls dice.\nExamples:\n12  Rolls 12d6.\nModifiers:\n> Threshold. 12>3 returns success if number of hits is greater than or equal to 3.\ne Edge. Use for pre-edge. Will add one die and count 4s as hits.\ng Glitch Die: Roll one die. If a 1, a glitch occurs. If a 5 or 6, an exploit happens.\nr Reroll. 12r2 will reroll up to 2 misses.')
 @asyncio.coroutine
 def roll(ctx, roll : str):
     plural, index, num_of_dice, threshold, reroll, glitch, edge = "", -1, 0, 0, 0, False, False
