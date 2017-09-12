@@ -32,7 +32,7 @@ def is_num(s):
 # Roll die and get a random number between a and b (inclusive) adding/subtracting the modifier
 # Parameters: a [low number], b [high number], modifier [amount to add/subtract to total]
 # threshold [number that result needs to match or exceed to count as a success]
-# Returns: str 
+# Returns: str
 def roll_basic(a, b, modifier, threshold):
     results = ""
     base = randint(int(a), int(b))
@@ -55,10 +55,10 @@ def roll_basic(a, b, modifier, threshold):
     return results
 
 # Rolls a set of die and returns either number of hits or the total amount
-# Parameters: num_of_dice [Number of dice to roll], dice_type[die type (e.g. d8, d6), 
+# Parameters: num_of_dice [Number of dice to roll], dice_type[die type (e.g. d8, d6),
 # hit [number that must be exceeded to count as a success], modifier [amount to add to/subtract from total],
 # threshold [number of successes needed to be a win]
-# Returns: String with results 
+# Returns: String with results
 def roll_hit(num_of_dice, dice_type, hit, modifier, threshold):
     results = ""
     total = 0
@@ -89,12 +89,73 @@ def roll_hit(num_of_dice, dice_type, hit, modifier, threshold):
     return results
 
 @bot.event
-@asyncio.coroutine 
+@asyncio.coroutine
 def on_ready():
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+
+
+
+def explodes(result, sides):
+    return result >= explodes_on(sides)
+
+def explodes_on(sides):
+    if(sides == 4):
+        return 4
+    elif(sides == 6):
+        return 6
+    elif(sides == 8):
+        return 7
+    elif(sides == 10):
+        return 8
+    elif(sides == 12):
+        return 9
+    else:
+        raise ValueError("Dice isn't one of d4, d6, d8, d10, or d12")
+
+            #d4:4, d6:6, d8:7-8, d10:8-10, d12:9-12
+
+# Parse !roll verbiage
+@bot.command(pass_context=True,description='Rolls dice in the style of our 20Arcana group., e.g. "!rollarcn 8" to roll a d8 and the standard d6.')
+@asyncio.coroutine
+def rollarcn(ctx, roll : str):
+    # author: Writer of discord message
+    author = ctx.message.author
+    if (is_num(roll) is False):
+        yield from bot.say("Please give me a number for the sides of your dice.")
+
+    dice_type = int(roll)
+    if (not dice_type in set([4,6,8,10,12, 20])):
+        yield from bot.say("Please give me one of: 4, 6, 8, 10, 12, 20.")
+    try:
+        normal_die_orig = randint(1, int(dice_type))
+        normal_die_result = normal_die_orig
+        normal_die_add = 0
+        if(explodes(normal_die_result, dice_type)):
+            normal_die_add = randint(1, int(dice_type))
+            normal_die_result += normal_die_add
+
+        heroic_die_orig = randint(1, 6)
+        heroic_die_result = heroic_die_orig
+        heroic_die_add = 0
+        if(explodes(heroic_die_result, 6)):
+            heroic_die_add = randint(1, 6)
+            heroic_die_result += heroic_die_add
+
+        result = max(normal_die_result, heroic_die_result)
+
+        yield from bot.say("{} rolls {}+{} (on d{}) and {}+{} (on hero die). Result: {}".format(
+            author,
+            str(normal_die_orig), str(normal_die_add),str(dice_type),
+            str(heroic_die_orig),str(heroic_die_add),
+            str(result)))
+
+    except ValueError as err:
+        # Display error message to channel
+        yield from bot.say(err)
+
 
 # Parse !roll verbiage
 @bot.command(pass_context=True,description='Rolls dice.\nExamples:\n100  Rolls 1-100.\n50-100  Rolls 50-100.\n3d6  Rolls 3 d6 dice and returns total.\nModifiers:\n! Hit success. 3d6!5 Counts number of rolls that are greater than 5.\nmod: Modifier. 3d6mod3 or 3d6mod-3. Adds 3 to the result.\n> Threshold. 100>30 returns success if roll is greater than or equal to 30.\n\nFormatting:\nMust be done in order.\nSingle die roll: 1-100mod2>30\nMultiple: 5d6!4mod-2>2')
@@ -181,7 +242,7 @@ def roll(ctx, roll : str):
         # Display error message to channel
         yield from bot.say(err)
 
-#Bot command to delete all messages the bot has made.        
+#Bot command to delete all messages the bot has made.
 @bot.command(pass_context=True,description='Deletes all messages the bot has made')
 @asyncio.coroutine
 def purge(ctx):
@@ -189,6 +250,6 @@ def purge(ctx):
     deleted = yield from bot.purge_from(channel, limit=100, check=is_me)
     yield from bot.send_message(channel, 'Deleted {} message(s)'.format(len(deleted)))
 
-# Follow this helpful guide on creating a bot and adding it to your server. 
+# Follow this helpful guide on creating a bot and adding it to your server.
 # https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
-bot.run('token')
+bot.run('MzU3MjA5ODc1MTU3MjIxMzc3.DJml-A.gf3TUDLz13W_CAOizY63bGR1l9o')
